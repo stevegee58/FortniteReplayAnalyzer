@@ -3,7 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31911.196
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FortniteReplayAnalyzer", "FortniteReplayAnalyzer.csproj", "{31CC3912-0244-441F-BD83-64C3EF972A6F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FortniteReplayAnalyzer", "FortniteReplayAnalyzer.csproj", "{31CC3912-0244-441F-BD83-64C3EF972A6F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FortniteReplayReader", "FortniteReplayDecompressor\src\FortniteReplayReader\FortniteReplayReader.csproj", "{563F9A1D-E5D8-4974-9A95-8D5AB7B2C9CE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OozSharp", "FortniteReplayDecompressor\src\OozSharp\OozSharp.csproj", "{9D992E4B-CD0A-4AE7-8F25-B104EF2B79B1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Unreal.Core", "FortniteReplayDecompressor\src\Unreal.Core\Unreal.Core.csproj", "{65BD240C-9B3E-4A4A-B6E4-06F7C7BE2239}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Unreal.Encryption", "FortniteReplayDecompressor\src\Unreal.Encryption\Unreal.Encryption.csproj", "{4CF7329E-A2BD-46B3-A538-390824A3DAE3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +23,22 @@ Global
 		{31CC3912-0244-441F-BD83-64C3EF972A6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31CC3912-0244-441F-BD83-64C3EF972A6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31CC3912-0244-441F-BD83-64C3EF972A6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{563F9A1D-E5D8-4974-9A95-8D5AB7B2C9CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{563F9A1D-E5D8-4974-9A95-8D5AB7B2C9CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{563F9A1D-E5D8-4974-9A95-8D5AB7B2C9CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{563F9A1D-E5D8-4974-9A95-8D5AB7B2C9CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D992E4B-CD0A-4AE7-8F25-B104EF2B79B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D992E4B-CD0A-4AE7-8F25-B104EF2B79B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D992E4B-CD0A-4AE7-8F25-B104EF2B79B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D992E4B-CD0A-4AE7-8F25-B104EF2B79B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65BD240C-9B3E-4A4A-B6E4-06F7C7BE2239}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65BD240C-9B3E-4A4A-B6E4-06F7C7BE2239}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65BD240C-9B3E-4A4A-B6E4-06F7C7BE2239}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65BD240C-9B3E-4A4A-B6E4-06F7C7BE2239}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CF7329E-A2BD-46B3-A538-390824A3DAE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CF7329E-A2BD-46B3-A538-390824A3DAE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CF7329E-A2BD-46B3-A538-390824A3DAE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CF7329E-A2BD-46B3-A538-390824A3DAE3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

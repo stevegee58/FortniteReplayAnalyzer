@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -6,9 +6,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="FortniteReplayDecompressor\**" />
+    <EmbeddedResource Remove="FortniteReplayDecompressor\**" />
+    <None Remove="FortniteReplayDecompressor\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="FortniteReplayDecompressor\src\FortniteReplayReader\FortniteReplayReader.csproj" />
+    <ProjectReference Include="FortniteReplayDecompressor\src\OozSharp\OozSharp.csproj" />
+    <ProjectReference Include="FortniteReplayDecompressor\src\Unreal.Core\Unreal.Core.csproj" />
+    <ProjectReference Include="FortniteReplayDecompressor\src\Unreal.Encryption\Unreal.Encryption.csproj" />
   </ItemGroup>
 
 </Project>
