@@ -15,17 +15,16 @@ namespace ConsoleReader
         static void Main(string[] args)
         {
             string replayFilesFolder;
-            string myGUID;
+            string myGUID = "";
 
-            if (args.Length < 2)
+            if (args.Length < 1)
             {
-                System.Console.WriteLine("Command format: ConsoleReader <your player GUID> <replay file folder path>");
+                System.Console.WriteLine("Command format: ConsoleReader <replay file folder path>");
                 return;
             }
             else
             {
-                myGUID = args[0].ToUpper();
-                replayFilesFolder = args[1];
+                replayFilesFolder = args[0];
             }
 
             var serviceCollection = new ServiceCollection()
@@ -40,10 +39,12 @@ namespace ConsoleReader
             var gameNumber = 0;
             var guidCounts = new Dictionary<string, int>();
             var myElimGUIDs = new Dictionary<string, string>();
+            var platformCounts = new Dictionary<string, int>();
             foreach (var replayFile in replayFiles)
             {
                 var botMap = new Dictionary<string, string>();
                 var humanMap = new Dictionary<string, string>();
+                float[] deathTimes = new float[100];
                 int henchmenCount = 0;
                 int myHumanElims = 0;
                 int myBotElims = 0;
@@ -54,11 +55,53 @@ namespace ConsoleReader
                 {
                     var reader = new ReplayReader(logger, ParseMode.Full);
                     var replay = reader.ReadReplay(replayFile);
-
+#if false
+                    Console.WriteLine($"timestamp,x,y,z");
+#endif
+                    int playerIndex = 0;
+                    bool headingLine = true;
                     foreach (FortniteReplayReader.Models.PlayerData item in replay.PlayerData)
                     {
                         if (item.EpicId != null)
                         {
+#if false
+                            Unreal.Core.Models.FVector xxx;
+                            if(item.Locations.Count > 0)
+                            {
+                                if (headingLine)
+                                {
+                                    Console.WriteLine($"x,y,z,bot,me,timestamp,guid");
+                                    headingLine = false;
+                                }
+                                xxx = item.Locations[0].ReplicatedMovement.Value.Location;
+                                int me = 0;
+                                var timestamp = item.Locations[0].LastUpdateTime;
+                                if (item.IsReplayOwner)
+                                {
+                                    me = 1;
+                                }
+                                Console.WriteLine($"{xxx.X},{xxx.Y},{xxx.Z},{0},{me},{item.PlayerId},{timestamp}");
+                            }
+#endif
+                            if (item.IsReplayOwner)
+                            {
+                                myGUID = item.PlayerId;
+#if false
+                                for (int i = 0;i < item.Locations.Count;i++)
+                                {
+                                    Unreal.Core.Models.FVector xxx;
+                                    xxx = item.Locations[i].ReplicatedMovement.Value.Location;
+                                    var timestamp = item.Locations[i].LastUpdateTime;
+                                    Console.WriteLine($"{timestamp},{xxx.X},{xxx.Y},{xxx.Z}");
+                                }
+#endif
+                            }
+
+                            if (item.DeathTime != null)
+                            {
+                                deathTimes[playerIndex++] = (float)item.DeathTime;
+                            }
+
                             //Console.WriteLine($"Id: {item.EpicId} Isbot: {item.IsBot}");
                             humanMap[item.EpicId] = item.PlayerName;
                             //Console.WriteLine($"Id: {item.PlayerName}");
@@ -70,6 +113,29 @@ namespace ConsoleReader
                             {
                                 guidCounts[item.EpicId] = 1;
                             }
+
+                            if (item.Platform != null)
+                            {
+                                if (platformCounts.ContainsKey(item.Platform))
+                                {
+                                    platformCounts[item.Platform]++;
+                                }
+                                else
+                                {
+                                    platformCounts[item.Platform] = 1;
+                                }
+                            }
+                            else
+                            {
+                                if (platformCounts.ContainsKey("unknown"))
+                                {
+                                    platformCounts["unknown"]++;
+                                }
+                                else
+                                {
+                                    platformCounts["unknown"] = 1;
+                                }
+                            }
                         }
                         else if (item.BotId != null)
                         {
@@ -78,18 +144,26 @@ namespace ConsoleReader
                             // Only count AI players, so check valid GUID in BotId.
                             if (Guid.TryParse(item.BotId, out var dummyGuid))
                             {
-                                //Console.WriteLine($"Id: {item.PlayerName} (BOT)");
-                                botMap[item.BotId] = item.PlayerName;
 #if false
-                                if (guidCounts.ContainsKey(item.BotId))
+                                if(item.Locations.Count > 0)
                                 {
-                                    guidCounts[item.BotId]++;
-                                }
-                                else
-                                {
-                                    guidCounts[item.BotId] = 1;
+                                    if (headingLine)
+                                    {
+                                        Console.WriteLine($"x,y,z,bot,me,guid,timestamp");
+                                        headingLine = false;
+                                    }
+                                    var xxx = item.Locations[0].ReplicatedMovement.Value.Location;
+                                    var timestamp = item.Locations[0].LastUpdateTime;
+                                    Console.WriteLine($"{xxx.X},{xxx.Y},{xxx.Z},{1},{0},{0},{timestamp}");
                                 }
 #endif
+                                if (item.DeathTime != null)
+                                {
+                                    deathTimes[playerIndex++] = (float)item.DeathTime;
+                                }
+
+                                //Console.WriteLine($"Id: {item.PlayerName} (BOT)");
+                                botMap[item.BotId] = item.PlayerName;
                             }
                             else
                             {
@@ -103,6 +177,12 @@ namespace ConsoleReader
                             //Console.WriteLine($"Id: {item.PlayerName} (Henchman)");
                             henchmenCount++;
                         }
+                    }
+
+                    if (myGUID == "")
+                    {
+                        Console.WriteLine($"Your player ID not found.  Exiting...");
+                        return;
                     }
 
                     foreach (FortniteReplayReader.Models.KillFeedEntry item in replay.KillFeed)
@@ -160,6 +240,13 @@ namespace ConsoleReader
                 }
                 sw.Stop();
                 gameNumber++;
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("Platforms:");
+            foreach (var count in platformCounts)
+            {
+                Console.WriteLine(count);
             }
 
             Console.WriteLine();
