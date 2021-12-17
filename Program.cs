@@ -7,12 +7,16 @@ using System.IO;
 using Unreal.Core.Models.Enums;
 using System.Collections.Generic;
 using FortniteReplayReader.Models.Events;
+using System.Linq;
 
 namespace ConsoleReader
 {
+    using PlatformCountsType = System.Collections.Generic.Dictionary<string, int>;
+    using GUIDCountsType = System.Collections.Generic.Dictionary<string, int>;
+
     class Program
     {
-        static Dictionary<string, int> platformCounts = new Dictionary<string, int>();
+        static PlatformCountsType platformCounts = new PlatformCountsType();
 
         static void UpdatePlatformCount(FortniteReplayReader.Models.PlayerData item)
         {
@@ -65,7 +69,7 @@ namespace ConsoleReader
             var replayFiles = Directory.EnumerateFiles(replayFilesFolder, "*.replay");
 
             var gameNumber = 0;
-            var guidCounts = new Dictionary<string, int>();
+            var guidCounts = new GUIDCountsType();
             var myElimGUIDs = new Dictionary<string, string>();
             foreach (var replayFile in replayFiles)
             {
@@ -250,9 +254,20 @@ namespace ConsoleReader
 
             Console.WriteLine();
             Console.WriteLine("Platforms:");
-            foreach (var count in platformCounts)
+            var mySortedList = platformCounts.OrderByDescending(d => d.Value);
+            foreach (KeyValuePair<string, int> entry in mySortedList)
             {
-                Console.WriteLine(count);
+                Console.WriteLine($"{entry.Key}: {entry.Value}");
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("Repeated GUIDs:");
+            foreach (KeyValuePair<string, int> entry in guidCounts)
+            {
+                if (entry.Value > 1 && entry.Key != myGUID)
+                {
+                    Console.WriteLine($"{entry.Key}: {entry.Value}");
+                }
             }
 
             Console.WriteLine();
