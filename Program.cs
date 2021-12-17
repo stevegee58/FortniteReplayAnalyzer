@@ -12,6 +12,34 @@ namespace ConsoleReader
 {
     class Program
     {
+        static Dictionary<string, int> platformCounts = new Dictionary<string, int>();
+
+        static void UpdatePlatformCount(FortniteReplayReader.Models.PlayerData item)
+        {
+            if (item.Platform != null)
+            {
+                if (platformCounts.ContainsKey(item.Platform))
+                {
+                    platformCounts[item.Platform]++;
+                }
+                else
+                {
+                    platformCounts[item.Platform] = 1;
+                }
+            }
+            else
+            {
+                if (platformCounts.ContainsKey("unknown"))
+                {
+                    platformCounts["unknown"]++;
+                }
+                else
+                {
+                    platformCounts["unknown"] = 1;
+                }
+            }
+        }
+
         static void Main(string[] args)
         {
             string replayFilesFolder;
@@ -39,7 +67,6 @@ namespace ConsoleReader
             var gameNumber = 0;
             var guidCounts = new Dictionary<string, int>();
             var myElimGUIDs = new Dictionary<string, string>();
-            var platformCounts = new Dictionary<string, int>();
             foreach (var replayFile in replayFiles)
             {
                 var botMap = new Dictionary<string, string>();
@@ -114,28 +141,7 @@ namespace ConsoleReader
                                 guidCounts[item.EpicId] = 1;
                             }
 
-                            if (item.Platform != null)
-                            {
-                                if (platformCounts.ContainsKey(item.Platform))
-                                {
-                                    platformCounts[item.Platform]++;
-                                }
-                                else
-                                {
-                                    platformCounts[item.Platform] = 1;
-                                }
-                            }
-                            else
-                            {
-                                if (platformCounts.ContainsKey("unknown"))
-                                {
-                                    platformCounts["unknown"]++;
-                                }
-                                else
-                                {
-                                    platformCounts["unknown"] = 1;
-                                }
-                            }
+                            UpdatePlatformCount(item);
                         }
                         else if (item.BotId != null)
                         {
