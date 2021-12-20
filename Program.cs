@@ -8,6 +8,8 @@ using Unreal.Core.Models.Enums;
 using System.Collections.Generic;
 using FortniteReplayReader.Models.Events;
 using System.Linq;
+using System.Data.SQLite;
+
 
 namespace ConsoleReader
 {
