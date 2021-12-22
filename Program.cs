@@ -48,6 +48,18 @@ namespace ConsoleReader
 
         static void Main(string[] args)
         {
+            string cs = @"URI=file:players.sqlite";
+            using var con = new SQLiteConnection(cs);
+            con.Open();
+
+            using var cmd = new SQLiteCommand(con);
+
+            cmd.CommandText = "DROP TABLE IF EXISTS players";
+            cmd.ExecuteNonQuery();
+
+            cmd.CommandText = cmd.CommandText = @"CREATE TABLE players(timestamp TEXT, guid TEXT, name TEXT, placed INT, kills INT, platform TEXT, killed_by TEXT, PRIMARY KEY (timestamp, guid))";
+            cmd.ExecuteNonQuery();
+
             string replayFilesFolder;
             string myGUID = "";
 
@@ -75,6 +87,9 @@ namespace ConsoleReader
             var myElimGUIDs = new Dictionary<string, string>();
             foreach (var replayFile in replayFiles)
             {
+                int firstDash = replayFile.IndexOf('-') + 1;
+                int lastPeriod = replayFile.LastIndexOf('.');
+                var timestamp = replayFile.Substring(firstDash, lastPeriod - firstDash);
                 var botMap = new Dictionary<string, string>();
                 var humanMap = new Dictionary<string, string>();
                 float[] deathTimes = new float[100];
@@ -148,6 +163,21 @@ namespace ConsoleReader
                             }
 
                             UpdatePlatformCount(item);
+
+                            int placement = 0;
+                            if (item.Placement != null)
+                            {
+                                placement = (int)item.Placement;
+                            }
+
+                            int kills = 0;
+                            if (item.Kills != null)
+                            {
+                                kills = (int)item.Kills;
+                            }
+
+                            cmd.CommandText = $"INSERT INTO players(name, guid, timestamp, placed, kills, platform) VALUES('{item.PlayerName}','{item.EpicId}','{timestamp}',{placement},{kills},'{item.Platform}')";
+                            cmd.ExecuteNonQuery();
                         }
                         else if (item.BotId != null)
                         {
@@ -215,11 +245,29 @@ namespace ConsoleReader
                         if (item.PlayerName == myGUID)
                         {
                             //Console.WriteLine($"{item.FinisherOrDownerName} (bot: {item.FinisherOrDownerIsBot}) killed YOU");
-                            killedBy = humanMap[item.FinisherOrDownerName];
                             if (item.FinisherOrDownerIsBot)
                             {
                                 killedBy = "Bot";
                             }
+                            else
+                            {
+                                killedBy = humanMap[item.FinisherOrDownerName];
+                            }
+                        }
+
+                        if (!item.PlayerIsBot)
+                        {
+                            string killedBy1;
+                            if (item.FinisherOrDownerIsBot)
+                            {
+                                killedBy1 = "Bot";
+                            }
+                            else
+                            {
+                                killedBy1 = humanMap[item.FinisherOrDownerName];
+                            }
+                            cmd.CommandText = $"UPDATE players SET killed_by = '{killedBy1}' WHERE guid = '{item.PlayerName}' AND timestamp = '{timestamp}'";
+                            cmd.ExecuteNonQuery();
                         }
                     }
 
@@ -280,6 +328,8 @@ namespace ConsoleReader
             }
 
             //Console.ReadLine();
+
+            con.Close();
         }
     }
 }
