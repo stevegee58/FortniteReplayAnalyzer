@@ -129,6 +129,14 @@ namespace ConsoleReader
                 int firstDash = replayFile.IndexOf('-') + 1;
                 int lastPeriod = replayFile.LastIndexOf('.');
                 var timestamp = replayFile.Substring(firstDash, lastPeriod - firstDash);
+
+                cmd.CommandText = $"select count(*) from games where timestamp='{timestamp}'";
+                int count = Convert.ToInt32(cmd.ExecuteScalar());
+                if (count > 0)
+                {
+                    continue;
+                }
+
                 var botMap = new Dictionary<string, string>();
                 var humanMap = new Dictionary<string, string>();
                 float[] deathTimes = new float[100];
