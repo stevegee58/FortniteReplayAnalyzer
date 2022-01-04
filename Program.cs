@@ -152,9 +152,9 @@ namespace ConsoleReader
                     var replay = reader.ReadReplay(replayFile);
 #if false
                     Console.WriteLine($"timestamp,x,y,z");
+                    bool headingLine = true;
 #endif
                     int playerIndex = 0;
-                    bool headingLine = true;
                     foreach (FortniteReplayReader.Models.PlayerData item in replay.PlayerData)
                     {
                         if (item.EpicId != null)
