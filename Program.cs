@@ -6,9 +6,10 @@ using System.Diagnostics;
 using System.IO;
 using Unreal.Core.Models.Enums;
 using System.Collections.Generic;
-using FortniteReplayReader.Models.Events;
 using System.Linq;
 using System.Data.SQLite;
+using Unreal.Core;
+using Unreal.Core.Contracts;
 
 namespace ConsoleReader
 {
@@ -116,8 +117,13 @@ namespace ConsoleReader
                 .AddLogging(loggingBuilder => loggingBuilder
                     .AddConsole()
                     .SetMinimumLevel(LogLevel.Error));
+            serviceCollection.AddSingleton<INetGuidCache, NetGuidCache>();
+            serviceCollection.AddSingleton<INetFieldParser, NetFieldParser>();
+            serviceCollection.AddSingleton<ReplayReader>();
+
             var provider = serviceCollection.BuildServiceProvider();
             var logger = provider.GetService<ILogger<Program>>();
+            var reader = provider.GetRequiredService<ReplayReader>();
 
             var replayFiles = Directory.EnumerateFiles(replayFilesFolder, "*.replay");
 
@@ -148,8 +154,7 @@ namespace ConsoleReader
                 sw.Start();
                 try
                 {
-                    var reader = new ReplayReader(logger, ParseMode.Full);
-                    var replay = reader.ReadReplay(replayFile);
+                    var replay = reader.ReadReplay(replayFile, ParseMode.Full);
 #if false
                     Console.WriteLine($"timestamp,x,y,z");
                     bool headingLine = true;
