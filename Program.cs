@@ -96,7 +96,7 @@ namespace ConsoleReader
             cmd.CommandText = @"CREATE TABLE IF NOT EXISTS players(timestamp TEXT, guid TEXT, name TEXT, placed INT, bot_kills INT, human_kills INT, platform TEXT, killed_by TEXT, PRIMARY KEY (timestamp, guid))";
             cmd.ExecuteNonQuery();
 
-            cmd.CommandText = @"CREATE TABLE IF NOT EXISTS games(timestamp TEXT, humans INT, bots INT, henchmen INT, PRIMARY KEY (timestamp))";
+            cmd.CommandText = @"CREATE TABLE IF NOT EXISTS games(timestamp TEXT, humans INT, bots INT, henchmen INT, mats_gathered INT, mats_used INT, opponent_damage INT, accuracy REAL, PRIMARY KEY (timestamp))";
             cmd.ExecuteNonQuery();
 
             string replayFilesFolder;
@@ -377,7 +377,11 @@ namespace ConsoleReader
                     Console.WriteLine(lineFormat,
                         gameNumber, Path.GetFileName(replayFile), humanMap.Count, botMap.Count, henchmenCount, (humanMap.Count + botMap.Count), position, totalPlayers, myBotElims, myHumanElims, killedBy);
 
-                    cmd.CommandText = $"INSERT OR REPLACE INTO games(timestamp, humans, bots, henchmen) VALUES('{timestamp}', {humanMap.Count()}, {botMap.Count()}, {henchmenCount})";
+                    var matsGathered = replay.Stats.MaterialsGathered;
+                    var matsUsed = replay.Stats.MaterialsUsed;
+                    var opponentDamage = replay.Stats.DamageToPlayers;
+                    var accuracy = replay.Stats.Accuracy;
+                    cmd.CommandText = $"INSERT OR REPLACE INTO games(timestamp, humans, bots, henchmen, mats_gathered, mats_used, opponent_damage, accuracy) VALUES('{timestamp}', {humanMap.Count()}, {botMap.Count()}, {henchmenCount}, {matsGathered}, {matsUsed}, {opponentDamage}, {accuracy})";
                     cmd.ExecuteNonQuery();
                 }
                 catch (Exception ex)
