@@ -298,7 +298,14 @@ namespace ConsoleReader
                             }
                             else
                             {
-                                killedBy = humanMap[item.FinisherOrDownerName];
+                                if (item.FinisherOrDownerName != null)
+                                {
+                                    killedBy = humanMap[item.FinisherOrDownerName];
+                                }
+                                else
+                                {
+                                    killedBy = "<unknown>";
+                                }
                             }
                         }
 
@@ -311,7 +318,14 @@ namespace ConsoleReader
                             }
                             else
                             {
-                                killedBy1 = humanMap[item.FinisherOrDownerName];
+                                if (item.FinisherOrDownerName != null)
+                                {
+                                    killedBy1 = humanMap[item.FinisherOrDownerName];
+                                }
+                                else
+                                {
+                                    killedBy1 = "<unknown>";
+                                }
                             }
                             cmd.CommandText = $"UPDATE players SET killed_by = '{killedBy1}' WHERE guid = '{item.PlayerName}' AND timestamp = '{timestamp}'";
                             cmd.ExecuteNonQuery();
