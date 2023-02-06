@@ -5,4 +5,16 @@
 - I've organized this project so that FortniteReplayDecompressor is a git submodule.  In this way if FortniteReplayDecompressor is updated I can easily catch up.
 - In theory this project can be cloned and built with no further setup.  I used Visual Studio 2019 and .Net 5.0 for my environment.
 - The program runs on the command line with no GUI.  It takes 1 mandatory argument which is the full path to the folder containing the replay files.
-- To update the FortniteReplayDecompressor submodule to the latest: git submodule update --remote
+- To initially clone this repository with the submodule:
+```
+git clone https://github.com/stevegee58/FortniteReplayAnalyzer.git
+git submodule update --init --recursive
+```
+- To update the FortniteReplayDecompressor submodule to the latest:
+```
+git submodule update --remote
+```
+- To run the program:
+```
+FortniteReplayAnalyzer <replay folder location> <your player GUID>
+```

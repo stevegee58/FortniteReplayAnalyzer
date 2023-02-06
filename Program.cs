@@ -102,14 +102,15 @@ namespace ConsoleReader
             string replayFilesFolder;
             string myGUID = "";
 
-            if (args.Length < 1)
+            if (args.Length < 2)
             {
-                System.Console.WriteLine("Command format: ConsoleReader <replay file folder path>");
+                System.Console.WriteLine("Command format: ConsoleReader <replay file folder path> <your GUID");
                 return;
             }
             else
             {
                 replayFilesFolder = args[0];
+                myGUID = args[1];
             }
 
             var serviceCollection = new ServiceCollection()
