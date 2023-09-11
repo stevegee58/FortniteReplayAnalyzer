@@ -8,6 +8,7 @@
 - To initially clone this repository with the submodule:
 ```
 git clone https://github.com/stevegee58/FortniteReplayAnalyzer.git
+cd FortniteReplayAnalyzer
 git submodule update --init --recursive
 ```
 - To update the FortniteReplayDecompressor submodule to the latest:
