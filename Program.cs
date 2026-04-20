@@ -89,10 +89,6 @@ namespace ConsoleReader
 
             using var cmd = new SQLiteCommand(con);
 
-#if false
-            cmd.CommandText = "DROP TABLE IF EXISTS players";
-            cmd.ExecuteNonQuery();
-#endif
             cmd.CommandText = @"CREATE TABLE IF NOT EXISTS players(timestamp TEXT, guid TEXT, name TEXT, placed INT, bot_kills INT, human_kills INT, platform TEXT, killed_by TEXT, PRIMARY KEY (timestamp, guid))";
             cmd.ExecuteNonQuery();
 
@@ -151,46 +147,15 @@ namespace ConsoleReader
                 {
                     var reader = new ReplayReader(logger, ParseMode.Full);
                     var replay = reader.ReadReplay(replayFile);
-#if false
-                    Console.WriteLine($"timestamp,x,y,z");
-                    bool headingLine = true;
-#endif
                     int playerIndex = 0;
                     foreach (FortniteReplayReader.Models.PlayerData item in replay.PlayerData)
                     {
-                        if (item.EpicId != null)
+                        //Console.WriteLine($"{item.PlayerName},{item.PlayerId},{item.BotId},{item.IsBot}");
+                        if (item.IsBot == false)
                         {
-#if false
-                            Unreal.Core.Models.FVector xxx;
-                            if(item.Locations.Count > 0)
-                            {
-                                if (headingLine)
-                                {
-                                    Console.WriteLine($"x,y,z,bot,me,timestamp,guid");
-                                    headingLine = false;
-                                }
-                                xxx = item.Locations[0].ReplicatedMovement.Value.Location;
-                                int me = 0;
-                                var timestamp = item.Locations[0].LastUpdateTime;
-                                if (item.IsReplayOwner)
-                                {
-                                    me = 1;
-                                }
-                                Console.WriteLine($"{xxx.X},{xxx.Y},{xxx.Z},{0},{me},{item.PlayerId},{timestamp}");
-                            }
-#endif
                             if (item.IsReplayOwner)
                             {
                                 myGUID = item.PlayerId;
-#if false
-                                for (int i = 0;i < item.Locations.Count;i++)
-                                {
-                                    Unreal.Core.Models.FVector xxx;
-                                    xxx = item.Locations[i].ReplicatedMovement.Value.Location;
-                                    var timestamp = item.Locations[i].LastUpdateTime;
-                                    Console.WriteLine($"{timestamp},{xxx.X},{xxx.Y},{xxx.Z}");
-                                }
-#endif
                             }
 
                             if (item.DeathTime != null)
@@ -227,26 +192,13 @@ namespace ConsoleReader
                             cmd.CommandText = $"INSERT OR REPLACE INTO players(name, guid, timestamp, placed, bot_kills, human_kills, platform) VALUES('{item.PlayerName}','{item.EpicId}','{timestamp}',{placement},{0},{0},'{item.Platform}')";
                             cmd.ExecuteNonQuery();
                         }
-                        else if (item.BotId != null)
+                        else if (item.IsBot == true && item.BotId != null)
                         {
                             // EpicId is always a GUID (i.e. 32 hex characters).  BotId is only a GUID for AI players.
                             // Special bots like agents, henchmen, storm troopers etc have BotIds that are blank or alphanumeric names.
                             // Only count AI players, so check valid GUID in BotId.
                             if (Guid.TryParse(item.BotId, out var dummyGuid))
                             {
-#if false
-                                if(item.Locations.Count > 0)
-                                {
-                                    if (headingLine)
-                                    {
-                                        Console.WriteLine($"x,y,z,bot,me,guid,timestamp");
-                                        headingLine = false;
-                                    }
-                                    var xxx = item.Locations[0].ReplicatedMovement.Value.Location;
-                                    var timestamp = item.Locations[0].LastUpdateTime;
-                                    Console.WriteLine($"{xxx.X},{xxx.Y},{xxx.Z},{1},{0},{0},{timestamp}");
-                                }
-#endif
                                 if (item.DeathTime != null)
                                 {
                                     deathTimes[playerIndex++] = (float)item.DeathTime;
@@ -257,14 +209,14 @@ namespace ConsoleReader
                             }
                             else
                             {
-                                //Console.WriteLine($"Id: {item.PlayerName} (Henchman)");
+                                //Console.WriteLine($"Id: {item.PlayerName} (Henchman1)");
                                 henchmenCount++;
                             }
                         }
                         else
                         {
                             // Blank EpicId and BotId is a special bot.
-                            //Console.WriteLine($"Id: {item.PlayerName} (Henchman)");
+                            //Console.WriteLine($"Id: {item.PlayerName} (Henchman2)");
                             henchmenCount++;
                         }
                     }
@@ -414,7 +366,7 @@ namespace ConsoleReader
             {
                 Console.WriteLine($"{entry.Key}: {entry.Value}");
             }
-
+#if false
             Console.WriteLine();
             Console.WriteLine("Repeated GUIDs:");
             foreach (KeyValuePair<string, int> entry in guidCounts)
@@ -424,7 +376,7 @@ namespace ConsoleReader
                     Console.WriteLine($"{entry.Key}: {entry.Value}");
                 }
             }
-
+#endif
             Console.WriteLine();
             Console.WriteLine("Human Elimination GUIDs:");
             foreach (var guid in myElimGUIDs)
